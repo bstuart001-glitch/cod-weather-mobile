@@ -3,77 +3,54 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1220" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="COD Models" />
-  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#06111f" />
+  <title>COD Weather Mobile</title>
+  <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <title>COD Models Mobile</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root{--bg:#06111f;--panel:#0c1b2e;--panel2:#10243c;--text:#eef6ff;--muted:#9fb5cc;--accent:#49a7ff;--danger:#ff6b6b;--line:#1f3b5c}
+    *{box-sizing:border-box} html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+    body{display:flex;flex-direction:column;overflow:hidden}.top{padding:calc(env(safe-area-inset-top) + 8px) 12px 8px;background:linear-gradient(180deg,#081a2c,#06111f);border-bottom:1px solid var(--line)}
+    .title{display:flex;align-items:center;justify-content:space-between;gap:8px}.title h1{font-size:18px;margin:0;font-weight:800}.sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .tabs{display:flex;gap:7px;margin-top:10px;overflow-x:auto;padding-bottom:2px}.tab,.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:12px;padding:10px 12px;font-weight:700;font-size:13px;white-space:nowrap}.tab.active{background:var(--accent);color:#00172a;border-color:var(--accent)}
+    .sheet{background:var(--panel);border-bottom:1px solid var(--line);padding:10px 12px;max-height:42vh;overflow:auto}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.section{margin:12px 0}.section h2{font-size:13px;color:var(--muted);margin:0 0 7px;text-transform:uppercase;letter-spacing:.04em}.btn{width:100%;text-align:center;cursor:pointer}.btn.primary{background:var(--accent);color:#00172a;border-color:var(--accent)}.btn.ghost{background:transparent}.btn.danger{background:#341621;border-color:#623047;color:#ffd7df}.hidden{display:none!important}
+    .viewerWrap{position:relative;flex:1;min-height:0;background:#000}.toolbar{position:absolute;left:8px;right:8px;top:8px;z-index:5;display:flex;gap:8px;pointer-events:none}.pill{pointer-events:auto;background:rgba(6,17,31,.92);border:1px solid var(--line);border-radius:999px;color:var(--text);font-size:12px;font-weight:800;padding:8px 10px;text-decoration:none}.pill.right{margin-left:auto}
+    iframe{width:100%;height:100%;border:0;background:white}.help{font-size:13px;line-height:1.4;color:var(--muted)}.help b{color:var(--text)}input{width:100%;border:1px solid var(--line);border-radius:12px;background:#071426;color:var(--text);padding:12px;font-size:15px} .row{display:flex;gap:8px}.row>*{flex:1}.fav{display:flex;gap:8px;align-items:center;margin:8px 0}.fav a{flex:1;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:12px;text-decoration:none;padding:10px;font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.small{font-size:11px;color:var(--muted);margin-top:6px}.credit{font-size:11px;color:var(--muted);padding-bottom:6px} a{color:#9ed0ff}
+    @media (orientation:landscape){.sheet{max-height:36vh}.top{padding-top:6px}.title h1{font-size:16px}.tab,.btn{padding:8px 10px}.toolbar{top:6px}}
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <div>
-      <p class="eyebrow">Mobile PWA</p>
-      <h1>COD Models</h1>
-    </div>
-    <button id="installHelp" class="ghost">Install</button>
+  <header class="top">
+    <div class="title"><div><h1>COD Weather Mobile</h1><div class="sub">Mobile dashboard for College of DuPage NEXLAB Forecast Models</div></div><button class="tab" id="hideBtn">Hide Menu</button></div>
+    <nav class="tabs"><button class="tab active" data-panel="quick">Quick Models</button><button class="tab" data-panel="custom">Paste COD Link</button><button class="tab" data-panel="favorites">Favorites</button><button class="tab" data-panel="help">Help</button></nav>
   </header>
-
-  <main>
-    <section class="card hero">
-      <h2>Fast model shortcuts</h2>
-      <p>Tap a model to open College of DuPage forecast models in a phone-friendly launcher. Add your favorite direct COD share URLs below for one-tap access.</p>
-      <div class="grid" id="modelGrid"></div>
+  <main class="sheet" id="sheet">
+    <section id="quick" class="panel">
+      <div class="section"><h2>Open official COD viewer</h2><button class="btn primary" data-url="https://weather.cod.edu/forecast/">Open Forecast Home</button><div class="small">This loads the official COD model viewer inside the mobile app frame.</div></div>
+      <div class="section"><h2>Model shortcuts</h2><div class="grid3">
+        <button class="btn" data-url="https://weather.cod.edu/forecast/">HRRR</button><button class="btn" data-url="https://weather.cod.edu/forecast/">RAP</button><button class="btn" data-url="https://weather.cod.edu/forecast/">NAM</button><button class="btn" data-url="https://weather.cod.edu/forecast/">NAM Nest</button><button class="btn" data-url="https://weather.cod.edu/forecast/">GFS</button><button class="btn" data-url="https://weather.cod.edu/forecast/">GEFS</button>
+      </div><div class="small">COD does not publish stable public URLs for every current model/product/sector. Use COD’s Share Page button to save exact products below.</div></div>
+      <div class="section"><h2>Useful external weather pages</h2><div class="grid"><button class="btn ghost" data-url="https://www.spc.noaa.gov/">SPC</button><button class="btn ghost" data-url="https://www.weather.gov/oax/">NWS Omaha</button></div></div>
     </section>
-
-    <section class="card">
-      <div class="section-head">
-        <h2>Your favorites</h2>
-        <button id="clearFavorites" class="linkbtn">Clear</button>
-      </div>
-      <p class="small">On COD, use the Share Page tool, copy the URL, then paste it here. This avoids scraping or automated downloading.</p>
-      <form id="favoriteForm" class="favorite-form">
-        <input id="favoriteName" placeholder="Name, e.g. HRRR Midwest Reflectivity" autocomplete="off" />
-        <input id="favoriteUrl" placeholder="Paste COD share URL" inputmode="url" autocomplete="off" />
-        <button type="submit">Save</button>
-      </form>
-      <div id="favoritesList" class="favorites"></div>
-    </section>
-
-    <section class="card viewer-card">
-      <div class="section-head">
-        <h2>Viewer</h2>
-        <a id="openExternal" class="linkbtn" target="_blank" rel="noopener">Open full site</a>
-      </div>
-      <div id="viewerNotice" class="notice">Choose a shortcut above. If COD blocks embedding, use “Open full site.”</div>
-      <iframe id="viewer" title="COD Forecast Models" loading="lazy"></iframe>
-    </section>
-
-    <section class="card compact">
-      <h2>Important</h2>
-      <p>This app links to COD/NEXLAB pages. It does not bulk-download, scrape, or rehost model imagery. Credit: College of DuPage NEXLAB.</p>
-    </section>
+    <section id="custom" class="panel hidden"><div class="section"><h2>Save exact COD model/product</h2><p class="help">On COD, tap the <b>Share Page</b> icon, copy the URL, paste it here, then save it. That gives you one-tap access to the exact model, sector, product, and forecast hour.</p><input id="urlInput" placeholder="Paste COD share URL here" autocomplete="off"><div class="row" style="margin-top:8px"><button class="btn primary" id="openCustom">Open</button><button class="btn" id="saveCustom">Save Favorite</button></div></div></section>
+    <section id="favorites" class="panel hidden"><div class="section"><h2>Saved COD links</h2><div id="favList"></div><button class="btn danger" id="clearFavs">Clear Favorites</button></div></section>
+    <section id="help" class="panel hidden"><div class="section"><h2>How to use</h2><p class="help">This app is a mobile wrapper for the official COD NEXLAB forecast viewer. Start with <b>Open Forecast Home</b>, select your model/product in COD, then use COD’s <b>Share Page</b> feature to copy the exact URL. Paste and save it under <b>Paste COD Link</b>.</p><p class="help">For the best iPhone view, rotate sideways, then tap <b>Hide Menu</b>. Use <b>Open Full Tab</b> if COD blocks iframe controls on your device.</p><p class="credit">Weather imagery and model pages are from College of DuPage NEXLAB. This PWA does not scrape, cache, bulk download, or redistribute COD imagery.</p></div></section>
   </main>
-
-  <nav class="bottomnav">
-    <a href="#" data-target="top">Home</a>
-    <a href="https://weather.cod.edu/forecast/" target="_blank" rel="noopener">COD</a>
-    <a href="https://weather.cod.edu/terms/" target="_blank" rel="noopener">Terms</a>
-  </nav>
-
-  <dialog id="installDialog">
-    <h2>Add to iPhone Home Screen</h2>
-    <ol>
-      <li>Open this page in Safari.</li>
-      <li>Tap the Share icon.</li>
-      <li>Tap <strong>Add to Home Screen</strong>.</li>
-      <li>Name it “COD Models” and tap Add.</li>
-    </ol>
-    <button id="closeDialog">Got it</button>
-  </dialog>
-
-  <script src="app.js"></script>
-</body>
-</html>
+  <section class="viewerWrap">
+    <div class="toolbar"><button class="pill" id="menuBtn">Menu</button><a class="pill" id="fullTab" target="_blank" rel="noopener">Open Full Tab</a><button class="pill right" id="reloadBtn">Reload</button></div>
+    <iframe id="viewer" title="COD Forecast Models" src="https://weather.cod.edu/forecast/" allow="fullscreen"></iframe>
+  </section>
+<script>
+  const viewer=document.getElementById('viewer'), fullTab=document.getElementById('fullTab'), sheet=document.getElementById('sheet');
+  const setUrl=(url)=>{ if(!/^https:\/\/(weather\.cod\.edu|www\.spc\.noaa\.gov|www\.weather\.gov)\//.test(url)){alert('Use a COD/NWS/SPC https URL.');return} viewer.src=url; fullTab.href=url; localStorage.setItem('lastUrl',url); };
+  fullTab.href=localStorage.getItem('lastUrl')||'https://weather.cod.edu/forecast/'; viewer.src=fullTab.href;
+  document.querySelectorAll('[data-url]').forEach(b=>b.onclick=()=>setUrl(b.dataset.url));
+  document.querySelectorAll('.tabs .tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tabs .tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.add('hidden'));document.getElementById(t.dataset.panel).classList.remove('hidden'); if(t.dataset.panel==='favorites') renderFavs();});
+  document.getElementById('hideBtn').onclick=()=>sheet.classList.toggle('hidden'); document.getElementById('menuBtn').onclick=()=>sheet.classList.toggle('hidden'); document.getElementById('reloadBtn').onclick=()=>viewer.src=viewer.src;
+  document.getElementById('openCustom').onclick=()=>setUrl(document.getElementById('urlInput').value.trim());
+  document.getElementById('saveCustom').onclick=()=>{const u=document.getElementById('urlInput').value.trim(); if(!u){return} if(!u.startsWith('https://weather.cod.edu/')){alert('Paste a weather.cod.edu URL.');return} const favs=JSON.parse(localStorage.getItem('favs')||'[]'); if(!favs.includes(u)) favs.unshift(u); localStorage.setItem('favs',JSON.stringify(favs.slice(0,50))); alert('Saved.'); renderFavs();};
+  function renderFavs(){const el=document.getElementById('favList'), favs=JSON.parse(localStorage.getItem('favs')||'[]'); el.innerHTML=favs.length?'':'<p class="help">No favorites yet. Paste a COD Share Page URL and save it.</p>'; favs.forEach((u,i)=>{const d=document.createElement('div');d.className='fav';const a=document.createElement('a');a.href='#';a.textContent=u.replace('https://weather.cod.edu/forecast/','COD forecast ');a.onclick=e=>{e.preventDefault();setUrl(u)};const del=document.createElement('button');del.className='btn danger';del.style.maxWidth='72px';del.textContent='Delete';del.onclick=()=>{favs.splice(i,1);localStorage.setItem('favs',JSON.stringify(favs));renderFavs()};d.append(a,del);el.append(d);});}
+  document.getElementById('clearFavs').onclick=()=>{if(confirm('Delete all favorites?')){localStorage.removeItem('favs');renderFavs();}};
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('./service-worker.js').catch(()=>{});}
+</script>
+</body></html>
