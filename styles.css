@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="COD Models" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>COD Models Mobile</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Mobile PWA</p>
+      <h1>COD Models</h1>
+    </div>
+    <button id="installHelp" class="ghost">Install</button>
+  </header>
+
+  <main>
+    <section class="card hero">
+      <h2>Fast model shortcuts</h2>
+      <p>Tap a model to open College of DuPage forecast models in a phone-friendly launcher. Add your favorite direct COD share URLs below for one-tap access.</p>
+      <div class="grid" id="modelGrid"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Your favorites</h2>
+        <button id="clearFavorites" class="linkbtn">Clear</button>
+      </div>
+      <p class="small">On COD, use the Share Page tool, copy the URL, then paste it here. This avoids scraping or automated downloading.</p>
+      <form id="favoriteForm" class="favorite-form">
+        <input id="favoriteName" placeholder="Name, e.g. HRRR Midwest Reflectivity" autocomplete="off" />
+        <input id="favoriteUrl" placeholder="Paste COD share URL" inputmode="url" autocomplete="off" />
+        <button type="submit">Save</button>
+      </form>
+      <div id="favoritesList" class="favorites"></div>
+    </section>
+
+    <section class="card viewer-card">
+      <div class="section-head">
+        <h2>Viewer</h2>
+        <a id="openExternal" class="linkbtn" target="_blank" rel="noopener">Open full site</a>
+      </div>
+      <div id="viewerNotice" class="notice">Choose a shortcut above. If COD blocks embedding, use “Open full site.”</div>
+      <iframe id="viewer" title="COD Forecast Models" loading="lazy"></iframe>
+    </section>
+
+    <section class="card compact">
+      <h2>Important</h2>
+      <p>This app links to COD/NEXLAB pages. It does not bulk-download, scrape, or rehost model imagery. Credit: College of DuPage NEXLAB.</p>
+    </section>
+  </main>
+
+  <nav class="bottomnav">
+    <a href="#" data-target="top">Home</a>
+    <a href="https://weather.cod.edu/forecast/" target="_blank" rel="noopener">COD</a>
+    <a href="https://weather.cod.edu/terms/" target="_blank" rel="noopener">Terms</a>
+  </nav>
+
+  <dialog id="installDialog">
+    <h2>Add to iPhone Home Screen</h2>
+    <ol>
+      <li>Open this page in Safari.</li>
+      <li>Tap the Share icon.</li>
+      <li>Tap <strong>Add to Home Screen</strong>.</li>
+      <li>Name it “COD Models” and tap Add.</li>
+    </ol>
+    <button id="closeDialog">Got it</button>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
