@@ -1,11 +1,75 @@
-:root { color-scheme: dark; --bg:#07101f; --card:#111c2e; --card2:#17253a; --text:#edf5ff; --muted:#9fb3cc; --accent:#77c7ff; --line:rgba(255,255,255,.11); --danger:#ff8b8b; }
-*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(180deg,#07101f,#0a1324 50%,#07101f);color:var(--text);padding:env(safe-area-inset-top) 14px 90px;}
-.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;backdrop-filter:blur(18px);background:rgba(7,16,31,.82)}
-h1{font-size:27px;margin:0;letter-spacing:-.03em} h2{font-size:19px;margin:0 0 8px} p{line-height:1.42;color:var(--muted);margin:0 0 12px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;margin:0;color:var(--accent)}
-.card{background:linear-gradient(180deg,var(--card),#0e192b);border:1px solid var(--line);border-radius:22px;padding:16px;margin:13px 0;box-shadow:0 10px 30px rgba(0,0,0,.2)}.hero{padding-top:18px}.compact p{margin-bottom:0}.small{font-size:13px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.model{appearance:none;border:1px solid var(--line);border-radius:17px;background:var(--card2);color:var(--text);padding:14px 12px;text-align:left;font-weight:800;font-size:16px}.model span{display:block;color:var(--muted);font-size:12px;font-weight:500;margin-top:3px}.model:active{transform:scale(.98)}
-button,.button{border:0;border-radius:14px;background:var(--accent);color:#06101f;font-weight:800;padding:12px 14px;text-decoration:none}.ghost{background:rgba(119,199,255,.13);color:var(--accent);border:1px solid rgba(119,199,255,.25)}.linkbtn{background:none;color:var(--accent);padding:0;text-decoration:none;font-weight:700;font-size:14px}
-.favorite-form{display:grid;gap:9px} input{width:100%;border:1px solid var(--line);background:#091426;color:var(--text);border-radius:14px;padding:13px;font-size:16px}.favorites{display:grid;gap:9px;margin-top:12px}.fav{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#0a1425;border:1px solid var(--line);border-radius:16px;padding:11px}.fav b{font-size:14px}.fav small{display:block;color:var(--muted);max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fav-actions{display:flex;gap:8px}.fav-actions button{padding:9px 10px}.delete{background:rgba(255,139,139,.14);color:var(--danger);border:1px solid rgba(255,139,139,.25)}
-.viewer-card{padding-bottom:12px}.notice{background:rgba(119,199,255,.1);border:1px solid rgba(119,199,255,.2);color:var(--muted);border-radius:14px;padding:10px;font-size:13px;margin:8px 0 10px} iframe{width:100%;height:62vh;border:1px solid var(--line);border-radius:16px;background:#06101f;display:none}.bottomnav{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:20;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:rgba(6,14,26,.86);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:21px;padding:8px}.bottomnav a{text-align:center;color:var(--text);text-decoration:none;padding:11px 4px;border-radius:14px;background:rgba(255,255,255,.05);font-weight:700;font-size:13px}
-dialog{max-width:330px;border:1px solid var(--line);border-radius:22px;background:#0d192b;color:var(--text);padding:18px} dialog::backdrop{background:rgba(0,0,0,.65)} li{margin:8px 0;color:var(--muted)}
-@media (min-width:720px){body{max-width:820px;margin:auto}.grid{grid-template-columns:repeat(4,1fr)} iframe{height:720px}}
+const COD_HOME = 'https://weather.cod.edu/forecast/';
+const models = [
+  { name: 'HRRR', note: 'Short range / severe' },
+  { name: 'RAP', note: 'Short range' },
+  { name: 'NAM', note: 'Medium range' },
+  { name: 'NAM Nest', note: 'High-res NAM' },
+  { name: 'GFS', note: 'Long range' },
+  { name: 'ECMWF', note: 'Long range' },
+  { name: 'GEFS', note: 'Ensemble' },
+  { name: 'COD Home', note: 'All models' }
+];
+
+const grid = document.getElementById('modelGrid');
+const viewer = document.getElementById('viewer');
+const notice = document.getElementById('viewerNotice');
+const openExternal = document.getElementById('openExternal');
+const favoritesList = document.getElementById('favoritesList');
+const form = document.getElementById('favoriteForm');
+const nameInput = document.getElementById('favoriteName');
+const urlInput = document.getElementById('favoriteUrl');
+const clearBtn = document.getElementById('clearFavorites');
+
+function openUrl(url) {
+  openExternal.href = url;
+  notice.textContent = 'Loading COD. If the frame stays blank, tap “Open full site.”';
+  viewer.style.display = 'block';
+  viewer.src = url;
+}
+
+models.forEach(m => {
+  const btn = document.createElement('button');
+  btn.className = 'model';
+  btn.innerHTML = `${m.name}<span>${m.note}</span>`;
+  btn.addEventListener('click', () => openUrl(COD_HOME));
+  grid.appendChild(btn);
+});
+openExternal.href = COD_HOME;
+
+function getFavorites(){
+  try { return JSON.parse(localStorage.getItem('codFavorites') || '[]'); }
+  catch { return []; }
+}
+function setFavorites(items){ localStorage.setItem('codFavorites', JSON.stringify(items)); renderFavorites(); }
+function renderFavorites(){
+  const items = getFavorites();
+  favoritesList.innerHTML = '';
+  if (!items.length) {
+    favoritesList.innerHTML = '<p class="small">No favorites saved yet.</p>';
+    return;
+  }
+  items.forEach((item, index) => {
+    const row = document.createElement('div'); row.className='fav';
+    row.innerHTML = `<div><b>${escapeHtml(item.name)}</b><small>${escapeHtml(item.url)}</small></div>`;
+    const actions = document.createElement('div'); actions.className='fav-actions';
+    const open = document.createElement('button'); open.textContent='Open'; open.onclick=()=>openUrl(item.url);
+    const del = document.createElement('button'); del.textContent='Del'; del.className='delete'; del.onclick=()=>{ const next=getFavorites(); next.splice(index,1); setFavorites(next); };
+    actions.append(open,del); row.appendChild(actions); favoritesList.appendChild(row);
+  });
+}
+function escapeHtml(s){ return s.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const name = nameInput.value.trim(); const url = urlInput.value.trim();
+  if (!name || !url) return;
+  if (!/^https:\/\/weather\.cod\.edu\//i.test(url)) { alert('Please use a weather.cod.edu URL.'); return; }
+  setFavorites([{name,url}, ...getFavorites()].slice(0,25));
+  nameInput.value=''; urlInput.value='';
+});
+clearBtn.addEventListener('click', () => { if(confirm('Clear saved favorites?')) setFavorites([]); });
+renderFavorites();
+
+document.getElementById('installHelp').onclick = () => document.getElementById('installDialog').showModal();
+document.getElementById('closeDialog').onclick = () => document.getElementById('installDialog').close();
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js');

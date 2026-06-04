@@ -1,1 +1,7 @@
-{"name":"COD Models Mobile","short_name":"COD Models","start_url":"./index.html","display":"standalone","background_color":"#07101f","theme_color":"#0b1220","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]}
+const CACHE='cod-models-mobile-v1';
+const ASSETS=['./','./index.html','./styles.css','./app.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))));
+self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+  if (url.origin === location.origin) e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+});
